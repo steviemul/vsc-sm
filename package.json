@@ -1,0 +1,72 @@
+{
+	"name": "vsc-sm",
+	"displayName": "vsc-sm",
+	"description": "OCC VS Code Integration",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"workspaceContains:.occ/config"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "extension.helloWorld",
+				"title": "Hello World"
+			},
+			{
+				"command": "extension.openComponentCode",
+				"title": "Open Component Code"
+			}
+		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "occ-explorer",
+					"title": "Oracle Commerce Cloud",
+					"icon": "images/commerce_w_28.png"
+				}
+			]
+		},
+		"views": {
+			"occ-explorer": [
+				{
+					"id": "occServer",
+					"name": "OCC Server Info"
+				},
+				{
+					"id": "dsLayouts",
+					"name": "Design Studio Layouts"
+				},
+				{
+					"id": "dsComponents",
+					"name": "Design Studio Components"
+				}
+			]
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "yarn run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^10.12.21",
+		"tslint": "^5.12.1",
+		"typescript": "^3.3.1",
+		"vscode": "^1.1.28"
+	},
+	"dependencies": {
+		"@types/glob": "^7.1.1",
+		"axios": "^0.18.0",
+		"glob": "^7.1.3"
+	}
+}
