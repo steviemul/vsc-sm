@@ -1,5 +1,7 @@
 import * as glob from 'glob';
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import {parse} from '@babel/parser';
 
 export default class MetaScanner {
 
@@ -11,16 +13,20 @@ export default class MetaScanner {
 
   scan () {
 
-    const pattern = vscode.workspace.rootPath + '/**/meta.js';
+    const pattern = vscode.workspace.rootPath + '/**/*.js';
 
-    glob.sync(pattern, { "ignore": ['**/node_modules/**'] }).forEach((metaFile) => {
+    glob.sync(pattern, { "ignore": ['**/node_modules/**'] }).forEach((jsFile) => {
 
       try {
-        const meta = require(metaFile);
+        const contents = fs.readFileSync(jsFile);
 
-        console.log(meta);
+        const ast = parse(contents);
+
+        console.log(ast);
       }
-      catch(error) {}
+      catch(error) {
+        console.error(error);
+      }
     });
 
   }

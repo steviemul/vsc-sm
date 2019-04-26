@@ -3,6 +3,8 @@
 	"displayName": "vsc-sm",
 	"description": "OCC VS Code Integration",
 	"version": "0.0.1",
+	"publisher": "steviemul",
+	"license": "MIT",
 	"engines": {
 		"vscode": "^1.32.0"
 	},
@@ -10,7 +12,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"workspaceContains:.occ/config"
+		"*"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -21,7 +23,19 @@
 			},
 			{
 				"command": "extension.openComponentCode",
-				"title": "Open Component Code"
+				"title": "Open Component Code",
+				"icon": {
+					"light": "images/code_16.png",
+					"dark": "images/code_16.png"
+				}
+			},
+			{
+				"command": "occ.deploy",
+				"title": "Deploy Application",
+				"icon": {
+					"light": "images/arrow-up.png",
+					"dark": "images/arrow-up.png"
+				}
 			}
 		],
 		"viewsContainers": {
@@ -36,8 +50,8 @@
 		"views": {
 			"occ-explorer": [
 				{
-					"id": "occServer",
-					"name": "OCC Server Info"
+					"id": "dsApplications",
+					"name": "Design Studio Applications"
 				},
 				{
 					"id": "dsLayouts",
@@ -46,6 +60,20 @@
 				{
 					"id": "dsComponents",
 					"name": "Design Studio Components"
+				}
+			]
+		},
+		"menus": {
+			"view/item/context": [
+				{
+					"command": "occ.deploy",
+					"when": "view == dsApplications",
+					"group": "inline"
+				},
+				{
+					"command": "extension.openComponentCode",
+					"when": "view == dsComponents",
+					"group": "inline"
 				}
 			]
 		}
@@ -65,8 +93,11 @@
 		"vscode": "^1.1.28"
 	},
 	"dependencies": {
+		"@babel/parser": "^7.4.5",
+		"@babel/types": "^7.4.4",
 		"@types/glob": "^7.1.1",
 		"axios": "^0.18.0",
+		"babel-core": "^6.26.3",
 		"glob": "^7.1.3"
 	}
 }
