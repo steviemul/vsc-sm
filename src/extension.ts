@@ -53,7 +53,7 @@ async function getComponents(client: Client, appName:String) : Promise<AxiosResp
 
 	return await client.axi.request({
 		method: 'get',
-		url: '/ccadmin/v1/clientApplications/' + appName + '/components',
+		url: '/ccadmin/v1/applications/' + appName + '/components',
 		headers: {
 			'Content-Type': 'application/json',
 			'Authorization': 'Bearer ' + accessToken,
@@ -62,7 +62,33 @@ async function getComponents(client: Client, appName:String) : Promise<AxiosResp
 	});
 }
 
+async function loadApplications (client: Client, config: any, provider: ApplicationProvider) {
+	const response = await getApplications(client, config.name);
+
+	provider.setData([response.data]);
+}
+
+async function loadLayouts (client: Client, config: any, provider: LayoutProvider) {
+	const response = await getLayouts(client, config.name);
+
+	provider.setData(response.data.items);
+};
+
+async function loadComponents (client: Client, config: any, provider: ComponentProvider) {
+	const response = await getComponents(client, config.name);
+
+	provider.setData(response.data.items);
+};
+
 export function activate(context: vscode.ExtensionContext) {
+
+	const applicationProvider = new ApplicationProvider(context);
+	const layoutProvider = new LayoutProvider(context);
+	const componentProvider = new ComponentProvider(context);
+
+	vscode.window.registerTreeDataProvider('dsApplications', applicationProvider);
+	vscode.window.registerTreeDataProvider('dsLayouts', layoutProvider);
+	vscode.window.registerTreeDataProvider('dsComponents', componentProvider);
 
 	const workspaceRoot = vscode.workspace.rootPath;
 
@@ -74,19 +100,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const client = new Client(appServer, config.appKey);
 
-		getLayouts(client, appConfig.name).then((response) => {
-			vscode.window.registerTreeDataProvider('dsLayouts', new LayoutProvider(context, response.data.items));
-		});
-
-		getComponents(client, appConfig.name).then((response) => {
-			vscode.window.registerTreeDataProvider('dsComponents', new ComponentProvider(context, response.data.items));
-		});
-
-		getApplications(client, appConfig.name).then((response) => {
-			const applications = [response.data];
-
-			vscode.window.registerTreeDataProvider('dsApplications', new ApplicationProvider(context, applications));
-		});
+		loadApplications(client, appConfig, applicationProvider);
+		loadLayouts(client, appConfig, layoutProvider);
+		loadComponents(client, appConfig, componentProvider);
 		
 		let disposable = vscode.commands.registerCommand('occ.deploy', () => {
 			const deployer = new Deployer();
@@ -97,10 +113,23 @@ export function activate(context: vscode.ExtensionContext) {
 			console.log('Attempting to locate ', component);
 		});
 
+		let refreshApplicationsCommand = vscode.commands.registerCommand('occ.refresh.applcations', () => {
+			loadApplications(client, appConfig, applicationProvider);
+		});
+
+		let refreshLayoutsCommand = vscode.commands.registerCommand('occ.refresh.layouts', () => {
+			loadLayouts(client, appConfig, layoutProvider);
+		});
+
+		let refreshComponentsCommand = vscode.commands.registerCommand('occ.refresh.components', () => {
+			loadComponents(client, appConfig, componentProvider);
+		});
+
 		context.subscriptions.push(disposable);
 		context.subscriptions.push(openComponentCommand);
-
-		scanner.scan();
+		context.subscriptions.push(refreshLayoutsCommand);
+		context.subscriptions.push(refreshComponentsCommand);
+		context.subscriptions.push(refreshApplicationsCommand);
 	}
 
 }

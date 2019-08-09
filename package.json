@@ -36,6 +36,30 @@
 					"light": "images/arrow-up.png",
 					"dark": "images/arrow-up.png"
 				}
+			},
+			{
+				"command":"occ.refresh.applcations",
+				"title":"Refresh Applications",
+				"icon": {
+					"light": "images/refresh_16.png",
+					"dark": "images/refresh_16.png"
+				}
+			},
+			{
+				"command": "occ.refresh.layouts",
+				"title": "Refresh Layouts",
+				"icon": {
+					"light": "images/refresh_16.png",
+					"dark": "images/refresh_16.png"
+				}
+			},
+			{
+				"command": "occ.refresh.components",
+				"title": "Refresh Components",
+				"icon": {
+					"light": "images/refresh_16.png",
+					"dark": "images/refresh_16.png"
+				}
 			}
 		],
 		"viewsContainers": {
@@ -64,6 +88,20 @@
 			]
 		},
 		"menus": {
+			"view/title": [{
+					"command": "occ.refresh.applcations",
+					"when": "view == dsApplications",
+					"group": "navigation"
+			},{
+				"command": "occ.refresh.layouts",
+				"when": "view == dsLayouts",
+				"group": "navigation"	
+			},
+			{
+				"command": "occ.refresh.components",
+				"when": "view == dsComponents",
+				"group": "navigation"	
+			}],
 			"view/item/context": [
 				{
 					"command": "occ.deploy",

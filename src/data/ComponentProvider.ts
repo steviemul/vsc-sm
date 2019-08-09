@@ -3,10 +3,20 @@ import Component from './Component';
 
 export class ComponentProvider implements vscode.TreeDataProvider<Component> {
 
-  components: []
+  private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
 
-  constructor(private context: vscode.ExtensionContext, components: []) {
-    this.components = components;
+  components: any[]
+
+  constructor(private context: vscode.ExtensionContext) {
+    this.components = new Array();
+  }
+
+  public setData(components: []) {
+    this.components.splice(0);
+    this.components.push(...components);
+
+    this._onDidChangeTreeData.fire();
   }
 
   public async getChildren(component?: Component): Promise<Component[]> {

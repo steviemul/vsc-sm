@@ -3,10 +3,20 @@ import Application from './Application';
 
 export class ApplicationProvider implements vscode.TreeDataProvider<Application> {
 
-  applications: []
+  private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
+  readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
 
-  constructor(private context: vscode.ExtensionContext, applications: []) {
-    this.applications = applications;
+  applications: any[]
+
+  constructor(private context: vscode.ExtensionContext) {
+    this.applications = new Array();
+  }
+
+  public setData(applications: any[]) {
+    this.applications.splice(0);
+    this.applications.push(...applications);
+
+    this._onDidChangeTreeData.fire();
   }
 
   public async getChildren(application?: Application): Promise<Application[]> {
